@@ -2531,3 +2531,8 @@ def test_api():
 @app.route('/test_dashboard_api')
 def test_api_2():
     return render_template('echart/dashboard_test.html')
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
