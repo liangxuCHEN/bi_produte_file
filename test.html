@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="BI system demo">
+    <meta name="author" content="Louis">
+
+    <!-- Bootstrap core CSS -->
+    <link href="http://192.168.0.94:8089/static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="http://192.168.0.94:8089/static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="http://192.168.0.94:8089/static/js/jquery-2.0.3.min.js"></script>
+    <script src="http://192.168.0.94:8089/static/js/bootstrap.min.js"></script>
+    <script src="http://192.168.0.94:8089/static/js/echarts.js" charset="utf-8"></script>
+	<script type="text/javascript" src="http://192.168.0.94:8089/static/js/dataTool.min.js"></script>
+    <title>echart</title>
+  </head>
+
+<body role="document">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 bg-info">
+                <div id="funnel" style="height:600px;"></div>
+            </div>
+
+            <div class="col-md-3 bg-info">
+                <div id="pie" style="height:600px;"></div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+//测试库的例子 chart 0
+option0 = {
+    title: {
+        left: 'center',
+        text: '漏斗图-转化率分析',
+        subtext: '纯属虚构'
+    },
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c}%"
+    },
+    toolbox: {
+        feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    legend: {
+        left: 'left',
+        bottom: '15%',
+        orient: 'vertical',
+        data: ['咨询','报价','打样','下单','复购']
+    },
+    calculable: true,
+    series: [
+        {
+            name:'漏斗图',
+            type:'funnel',
+            left: '10%',
+            top: 60,
+            //x2: 80,
+            bottom: 60,
+            width: '80%',
+            // height: {totalHeight} - y - y2,
+            min: 0,
+            max: 100,
+            minSize: '0%',
+            maxSize: '100%',
+            sort: 'descending',
+            gap: 2,
+            label: {
+                normal: {
+                    show: true,
+                    position: 'inside'
+                },
+                emphasis: {
+                    textStyle: {
+                        fontSize: 20
+                    }
+                }
+            },
+            labelLine: {
+                normal: {
+                    length: 10,
+                    lineStyle: {
+                        width: 1,
+                        type: 'solid'
+                    }
+                }
+            },
+            itemStyle: {
+                normal: {
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }
+            },
+            data: [
+                {value: 35, name: '复购'},
+                {value: 40, name: '下单'},
+                {value: 60, name: '打样'},
+                {value: 80, name: '报价'},
+                {value: 100, name: '咨询'}
+            ]
+        }
+    ]
+};
+
+var myChart0= echarts.init(document.getElementById('funnel'));
+myChart0.setOption(option0)
+
+// 这是最简单的使用例子， 后期前端封装
+var myChart1= echarts.init(document.getElementById('pie'));
+    var url = 'http://192.168.0.186:8088/superset/explore_json/table/11/?preselect_filters=%7B%7D&form_data=%7B%22datasource%22%3A%2211__table%22%2C%22viz_type%22%3A%22big_number%22%2C%22slice_id%22%3A46%2C%22granularity_sqla%22%3A%22created%22%2C%22time_grain_sqla%22%3A%22month%22%2C%22since%22%3A%225+months+ago%22%2C%22until%22%3A%221+months+ago%22%2C%22metric%22%3A%22count_distinct__id%22%2C%22y_axis_format%22%3A%22.3s%22%2C%22where%22%3A%22%22%2C%22having%22%3A%22%22%2C%22filters%22%3A%5B%5D%7D'
+    var url_form_data = '/superset/slice_json/37'
+    // var form_data = {"slice_id": 18, "viz_type": "pie", "row_limit": 50000, "metric": "sum__num", "since": "100 years ago", "groupby": ["gender"], "metrics": ["sum__num"], "compare_lag": "10", "limit": "25", "until": "now", "granularity": "ds", "markup_type": "markdown", "where": "", "compare_suffix": "o10Y", "datasource": "3__table"}
+    
+    //TODO: 权限问题的友好展现
+    $.get(url).done(function (response) {
+
+        // 先拿这个图表的参数
+        form_data = response
+
+        // 如果有全局变量去修改参数就更新
+        console.log(form_data)
+        // 如时间修改
+        form_data['since'] = '10 years ago'
+
+        table_id = form_data.datasource.split('__')[0]
+
+        url = url +  table_id + '?form_data=' + JSON.stringify(form_data)
+
+        //
+        $.get(url).done(function (response) {
+        console.log(response)
+
+       
+            // 数据适配echart格式
+            var values = []
+            var legend = []
+            response.data.forEach(function(val,index, arr){
+               console.log(val)
+               values.push({
+                    'value':val.y,
+                    'name': val.x
+               })
+               legend.push(val.x)        
+            })
+
+            console.log(values)
+            console.log(legend)
+
+            myChart1.setOption({
+                title : {
+                    text: 'test',
+                    x:'center'
+                },
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend:{
+                    orient: 'vertical',
+                    left: 'left',
+                    data: legend,
+                },
+                series : [
+                    //pie的格式，之后要对不同图案做封装
+                    {
+                        name: '访问来源',
+                        type: response.form_data.viz_type,
+                        radius : '55%',
+                        center: ['50%', '60%'],
+                        data: values,
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ],
+            });
+
+        })
+    })
+
+    
+    
+
+</script>
+</body>
