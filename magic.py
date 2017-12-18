@@ -4,6 +4,7 @@
 import os
 import shutil
 
+
 def compile_run():  
     ''' 
     py turn to pyc
@@ -26,7 +27,8 @@ def change_name(path, parent_path):
                 os.rename(os.path.join(path,file), os.path.join(path, new_file_name))
                 try:
                     shutil.move(os.path.join(path, new_file_name), parent_path)
-                except:
+                except Exception as e:
+                    print(e)
                     pass
 
 
@@ -47,3 +49,4 @@ if __name__ == '__main__':
     # if without pyc run this
     # compile_run()
     find_pyc(os.getcwd())
+    print('All has done.')
