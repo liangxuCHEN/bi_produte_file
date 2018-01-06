@@ -1853,8 +1853,18 @@ class Superset(BaseSupersetView):
             pass
         dashboard(dashboard_id=dash.id)
 
+        # bootstrap_data = {
+        #     'user_id': g.user.get_id(),
+        #     'dashboard_data': dashboard_data,
+        #     'datasources': {ds.uid: ds.data for ds in datasources},
+        #     'common': self.common_bootsrap_payload(),
+        # }
+        print(datasources)
         return Response(
-            json.dumps(dash.data),
+            json.dumps({
+                'dashboard':dash.data,
+                'verbose_map':{ds.uid: ds.data['verbose_map'] for ds in datasources}
+            }),
             status=200,
             mimetype="application/json")
 
@@ -2522,15 +2532,14 @@ def caravel(url):  # noqa
 
 # ---------------------------------------------------------------------
 
+# ---------------------------------------------------------------------
+@app.route('/test_dashboard_api/<dashboard_id>')
+def test_api_2(dashboard_id):
+    return render_template(
+        'echart/dashboard_test_2.html',
+        param={'dashboard_id':dashboard_id}
+    )
 
-@app.route('/test_api')
-def test_api():
-    return render_template('echart/echart_test.html')
-
-
-@app.route('/test_dashboard_api')
-def test_api_2():
-    return render_template('echart/dashboard_test.html')
 
 
 @app.errorhandler(404)

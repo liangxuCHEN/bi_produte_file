@@ -2287,7 +2287,7 @@ msgstr "时间相关的属性"
 
 #: superset/assets/javascripts/explore/stores/visTypes.js:16
 msgid "Datasource & Chart Type"
-msgstr "数据源和数据类型-------------"
+msgstr "数据源和数据类型"
 
 #: superset/assets/javascripts/explore/stores/visTypes.js:45
 msgid "This section exposes ways to include snippets of SQL in your query"
@@ -2643,7 +2643,7 @@ msgstr ""
 
 #: superset/assets/javascripts/profile/components/App.jsx:24
 msgid "Favorites"
-msgstr "关注"
+msgstr ""
 
 #: superset/assets/javascripts/profile/components/App.jsx:30
 msgid "Created Content"
@@ -5295,3 +5295,10 @@ msgstr "已保存查询"
 #~ msgid "Select [%s]"
 #~ msgstr "选择 [%s]"
 
+#~ msgid "Please choose at least one groupby"
+#~ msgstr "至少选择一个分组参数"
+
+
+#: superset/viz.py:1831
+msgid "Partition Diagram"
+msgstr "分区图"
